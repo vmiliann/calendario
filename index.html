@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/jquery-ui.min.css" />
     <link rel="stylesheet" href="css/fullcalendar.min.css" />
     <link rel="stylesheet" href='css/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+    <link rel="stylesheet" href="http://iux.prod.uci.cu/assets/css/themes/xilema/assets/css/bootstrap.css" />
 
     <script src="js/moment.min.js"></script>
     <script src="js/jquery.min.js"></script>
@@ -13,7 +14,7 @@
     <script src="js/fullcalendar.min.js"></script>
     <script src="js/locale-all.js"></script>
     <script src="calendar.js"></script>
-
+    <script src="http://iux.prod.uci.cu/assets/css/themes/xilema/assets/js/bootstrap.min.js"></script>
 
 <style>
 
@@ -66,6 +67,20 @@
 		margin: 0 auto;
 	}
 
+	/*#DatosEvento .controls {
+        margin-left: 125px;
+    }
+
+    #DatosEvento .control-label, #modal-icon-request-window .control-label {
+
+        width: auto;
+    }
+
+    #DatosEvento, #modal-icon-request-window {
+        margin-left: -200px;
+        width: 342px;
+    }*/
+
 </style>
 </head>
 <body>
@@ -90,5 +105,30 @@
 
 		<div style='clear:both'></div>
 	</div>
+
+	<button  id="crearPub" type="button" style="display: none" data-toggle="modal" data-target="#DatosEvento">
+        <!--{{ 'publicationCreate'| trans({}, 'PublicationBundle')}}-->Crear publicacion
+    </button>
+
+    <div id="DatosEvento" class="modal hide fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel"><!--{{ 'modal.header'| trans({}, 'PublicationBundle') }}--> My modal</h3>
+        </div>
+        <div class="modal-body">
+            <div style="width: 46%">
+                <label for="InicioEvento" style=" display: inline-block;float: left;margin-right: 5px"><!--{{ 'modal.labels.startTime'| trans({}, 'PublicationBundle') }}--> Inicio</label>
+                <input placeholder="hh:mm:ss" type="text" style="width: 30%;float: left;margin-right: 5px" id="InicioEvento"/><select id="iAmPm" style="width: 28%;float: left"><option value="0">AM</option><option value="12">PM</option></select>
+            </div>
+            <div id="horaFin" style="width: 46%;float: right">
+                <label for="finEvento" style=" display: inline-block;float: left;margin-right: 5px"><!--{{ 'modal.labels.endTime'| trans({}, 'PublicationBundle') }}--> Fin</label>
+                <input  type="text" placeholder="hh:mm:ss"  style="width: 30%;float: left;margin-right: 5px" id="finEvento"/><select id="fAmPm" style="width: 28%;float: left"><option value="0">AM</option><option value="12">PM</option></select>
+            </div>
+        </div>
+        <div class="footer-modal">
+            <button id="FinalizarEventoDef" class="btn" data-dismiss="modal" aria-hidden="true"><!--{{ 'modal.close'| trans({}, 'PublicationBundle') }}-->Finalizar</button>
+            <button id="ActualizarHora" class="btn btn-primary"><!--{{ 'modal.update'| trans({}, 'PublicationBundle') }}-->actualizar</button>
+        </div>
+    </div>
 </body>
 </html>

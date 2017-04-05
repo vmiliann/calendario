@@ -69,7 +69,10 @@ $(document).ready(function() {
 		navLinks: true,
 		editable: true,
 		eventLimit: true, // allow "more" link when too many events
-		events: [
+		events:{
+			url: 'get_eventos.php',
+		},
+		/*events: [
 			{
 				title: 'All Day Event',
 				start: '2017-04-01'
@@ -124,7 +127,7 @@ $(document).ready(function() {
 				url: 'http://google.com/',
 				start: '2017-04-28'
 			}
-		],
+		],*/
 		droppable: true, // this allows things to be dropped onto the calendar
 		drop: function() {
 			// is the "remove after drop" checkbox checked?
@@ -160,6 +163,7 @@ $(document).ready(function() {
                 draggable: false,
                 timeFormat: 'h(:mm)a',
                 showNonCurrentDates:true,
+                selectable: false
             },
             week: {
                 timeFormat: 'h(:mm)a'
@@ -342,8 +346,13 @@ $(document).ready(function() {
         eventClick: function (calEvent, jsEvent, view) {
 
                 var clonedStart=calEvent.start.clone();
-                var clonedEnd=calEvent.end.clone();
-
+                if (calEvent.end == null) {
+                	var clonedEnd = calEvent.start.clone();
+                }
+                else{
+                	var clonedEnd=calEvent.end.clone();
+                }
+                
                 if(isAllowedResize(calEvent)==false){
                     $("#finEvento").prop('disabled',true);
                     $('#infoBlock').html(noNewsEdit);
@@ -462,15 +471,16 @@ $(document).ready(function() {
                 return fin;
             }
         },
-        events: function (start, end, timezone, callback) {
+        /*events: function (start, end, timezone, callback) {
             var events = [];
             var options = {};
             options.data = {};
             options.data.start=start.format('YYYY-MM-DD');
             options.data.end=end.format('YYYY-MM-DD');
             options.type = 'text/json'
-            options.method = 'POST';
-            options.url = Routing.generate('publication_all');
+            options.method = 'GET';
+            //options.url: 'php/get_eventos.php';
+            options.url = Routing.generate('get_eventos.php');
             options.errorcallback = function (error) {
                 console.log(error);
             }
@@ -503,17 +513,17 @@ $(document).ready(function() {
                         events.push(
                             {
                                 title: this.title, // use the element's text as the event title
-                                idRef: -1,
-                                type: this.type,
-                                publicationId: this.idPub,
-                                color: setColors(this.type),
+                                //idRef: -1,
+                                //type: this.type,
+                                //publicationId: this.idPub,
+                                //color: setColors(this.type),
                                 overlaped: false,
                                 overlaps: false,
-                                parentBlock: this.parent,
+                                //parentBlock: this.parent,
                                 start: startDate,
                                 end: endDate,
                                 stick: true,
-                                idRef: this.ref,
+                                //idRef: this.ref,
                                 allDay:false
                             }
                         );
@@ -526,7 +536,7 @@ $(document).ready(function() {
             ajaxAccess(options);
 
 
-        },
+        },*/
 	});
 	
 	//Personalizando algunas cosas del calendario:tooltips iconos...
@@ -797,7 +807,7 @@ function deleteEvent(event) {
 }
 
 function ajaxAccess(options) {
-    /*$.ajax({
+    $.ajax({
         type: options.method,
         url: options.url,
         cache: false,
@@ -814,5 +824,5 @@ function ajaxAccess(options) {
         error: function (response) {
             options.errorcallback != undefined ? options.errorcallback(response) : 1 == 1;
         }
-    });*/
+    });
 }

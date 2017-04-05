@@ -1,0 +1,89 @@
+{% extends 'PublicationBundle::layout.html.twig' %}
+
+{% block title %}
+    <title>{{ 'title.publication'|trans({},'PublicationBundle') }}</title>
+{% endblock %}
+
+{% block stylesheet %}
+    <link href="{{ asset('bundles/publication/plugins/fullcalendar/fullcalendar.css')}}" rel="stylesheet">
+    <link href="{{ asset('bundles/publication/plugins/fullcalendar/fullcalendar.print.css')}}" rel="stylesheet" media="print">
+    <link href="{{ asset('bundles/publication/css/publication_style.css')}}" rel="stylesheet">
+    {{ parent() }}
+{% endblock%}
+
+{% block mainContent %}
+    <div class="pm_functionHeader" >
+    </div>
+
+    {% block msgSection %}
+        <div class="pm-modal-error" id="pm-modal-error"></div>
+        {% block msgSuccess %}
+            {{ parent() }}
+        {% endblock %}
+    {% endblock msgSection %}
+
+    <div id='wrap'>
+        <div id='external-events'>
+            <h2 id="list">{{ 'resources.header'| trans({}, 'PublicationBundle') }}</h2>
+            <div>
+                <table id="table_bug_report" class="table table-bordered table-striped">
+                    <thead class="head">
+                    <tr>
+                        <th class="center ui-state-default"></th>
+                        <th class="ui-state-default">{{ 'resources.labels.name'| trans({},'PublicationBundle') }}</th>
+                        <th class="ui-state-default">{{ 'resources.labels.actions'| trans({}, 'PublicationBundle') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <label for="intervaloEvento" style="margin-top: 10px">{{ 'eventLast'| trans({}, 'PublicationBundle') }}</label>
+                <input placeholder="hh:mm:ss" type="text"  id="intervaloEvento" style="width: 40%">
+                <button id="cambiarIntervaloEvento" class="button">{{ 'change' | trans({}, 'PublicationBundle') }}</button>
+            </div>
+        </div>
+        <button class="btn ui-button-content pub-delete" style="float: right; margin-top: 15px">
+            <i class=" sp sp-ico-btn-eliminar pm_iconInsideButton"></i>
+            <span class="pm_buttonText">{{ 'delete.buttom' | trans({}, 'PublicationBundle') }}</span>
+        </button>
+        <div id='calendar'>
+        </div>
+    </div>
+    <button  id="crearPub" type="button" style="display: none" data-toggle="modal" data-target="#DatosEvento">
+        {{ 'publicationCreate'| trans({}, 'PublicationBundle')}}
+    </button>
+{% endblock %}
+
+{% block modal %}
+    <div id="DatosEvento" class="modal hide fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">{{ 'modal.header'| trans({}, 'PublicationBundle') }}</h3>
+        </div>
+        <div class="modal-body">
+            <div style="width: 46%">
+                <label for="InicioEvento" style=" display: inline-block;float: left;margin-right: 5px">{{ 'modal.labels.startTime'| trans({}, 'PublicationBundle') }}</label>
+                <input placeholder="hh:mm:ss" type="text" style="width: 30%;float: left;margin-right: 5px" id="InicioEvento"/><select id="iAmPm" style="width: 28%;float: left"><option value="0">AM</option><option value="12">PM</option></select>
+            </div>
+            <div id="horaFin" style="width: 46%;float: right">
+                <label for="finEvento" style=" display: inline-block;float: left;margin-right: 5px">{{ 'modal.labels.endTime'| trans({}, 'PublicationBundle') }}</label>
+                <input  type="text" placeholder="hh:mm:ss"  style="width: 30%;float: left;margin-right: 5px" id="finEvento"/><select id="fAmPm" style="width: 28%;float: left"><option value="0">AM</option><option value="12">PM</option></select>
+            </div>
+        </div>
+        <div class="footer-modal">
+            <button id="FinalizarEventoDef" class="btn" data-dismiss="modal" aria-hidden="true">{{ 'modal.close'| trans({}, 'PublicationBundle') }}</button>
+            <button id="ActualizarHora" class="btn btn-primary">{{ 'modal.update'| trans({}, 'PublicationBundle') }}</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/publication/js/globals.js') }}"></script>
+    <script src="{{ asset('bundles/publication/js/publication_dataTable.js') }}"></script>
+    <script src="{{ asset('bundles/publication/plugins/moment/moment.min.js')}}"></script>
+    <script src="{{ asset('bundles/publication/plugins/jquery/jquery-ui.min.js')}}"></script>
+    <script src="{{ asset('bundles/publication/plugins/fullcalendar/fullcalendar.js')}}"></script>
+    <script src="{{ asset('bundles/publication/plugins/fullcalendar/locale-all.js') }}"></script>
+    <script src="{{ asset('bundles/publication/js/publication_calendar.js')}}"></script>
+{% endblock %}

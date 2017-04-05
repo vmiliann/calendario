@@ -3,37 +3,6 @@ var overlappedEvents = [];
 var isDragging=false;
 
 
-//level1
-var overlapsColor = 'grey';
-//level2
-var overlapedColor = 'green';
-//level3-patron
-var patronColor = 'red';
-var inicioEventoError = 'El horario de inicio del evento debe cumplir con el formato especificado';
-var finEventoError = 'El horario de fin del evento debe cumplir con el formato especificado';
-var inicioFinNotMatch = 'La hora de fin del evento no puede ser menor a la hora de inicio';
-var formatEventIntervalError = 'El intervalo debe cumplir con el formato especificado';
-var timeTooShort = 'Por favor elija un intervalo de tiempo mayor o igual a 1 minuto';
-var confirmCloseEvent='Seguro que desea eliminar el evento?'
-var noOverlapAllowed='Esta operación está permitida solo dentro de elementos de tipo bloque';
-var noNestedBlock='Esta operación no se puede realizar entre dos elementos de tipo bloque ';
-var confirmCloseBlock='Seguro que desea eliminar el bloque? Tenga en cuenta que los eventos relacionados al mismo también serán eliminados'
-var finalMenorInicioError='La hora de fin del evento no puede ser menor que la hora de inicio, para ese mismo día';
-var noNewsResize='Las noticias no pueden ver modificada su duración';
-var noNewsEdit='La hora fin de una noticia no puede ser editada';
-var eventEndsNextDay='Con los horarios seleccionados el evento culminará el dia siguiente a la fecha de inicio. Proceder de esta forma?'
-var endDateCollide='La fecha fin del evento interfiere con la hora inicio de otro evento';
-var tipoCartelera='La cartelera hasta el final de la programación?'
-var tiposEventos = {};
-tiposEventos.sennal = 'sennal';
-tiposEventos.bloque = 'bloque';
-tiposEventos.noticia = 'noticia';
-tiposEventos.cartelera = 'cartelera';
-tiposEventos.carteleraC = 'cartelera corta';
-tiposEventos.presentacion = 'presentacion';
-tiposEventos.patron = 'patron';
-
-
 $(document).ready(function () {
 
     /* Configuracion inicial de los elementos del menu que se trataran como eventos( Lo que se va a arrastrar)

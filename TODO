@@ -1,4 +1,7 @@
 TODO
 
-- cambiar vista mes-dia para el día seleccionado.
-- cargar y guardar evento desde una base de datos
+- crear evento y guardar evento para la base de datos
+- usar el cargar eventos del calendar
+- Los eventos que se adiciones se agreguen al panel lateral
+- que el update eventos cambie en la base de datos
+- eliminar eventos del panel lateral (cmapo en la tabla visibre:bool)
