@@ -20,6 +20,7 @@
 
 	body {
 		margin: 40px 10px;
+		text-align: center;
 		padding: 0;
 		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
 		font-size: 14px;
@@ -83,18 +84,31 @@
 
 </style>
 </head>
+
+
 <body>
 	<h1>Calendario</h1>
 
 	<div id='wrap'>
 
+		<h4>Canales</h4>
+		<div id="canales">
+			<select>
+				<option value=""> Cubavision</option>
+				<option value=""> TeleRebelde</option>
+				<option value=""> Educativo</option>
+			</select>
+		</div>	
+
 		<div id='external-events'>
 			<h4>Draggable Events</h4>
-			<div class='fc-event'>My Event 1</div>
-			<div class='fc-event'>My Event 2</div>
-			<div class='fc-event'>My Event 3</div>
-			<div class='fc-event'>My Event 4</div>
-			<div class='fc-event'>My Event 5</div>
+			<div id="my-events">
+				<div class='fc-event' data-duration="01:00">My Event 1</div>
+				<div class='fc-event' data-duration="01:00">My Event 2</div>
+				<div class='fc-event' data-duration="01:00">My Event 3</div>
+				<div class='fc-event' data-duration="01:00">My Event 4</div>
+				<div class='fc-event' data-duration="01:00">My Event 5</div>
+			</div>
 			<p>
 				<input type='checkbox' id='drop-remove' />
 				<label for='drop-remove'>remove after drop</label>
@@ -118,7 +132,7 @@
         <div class="modal-body">
             <div style="width: 46%">
                 <label for="InicioEvento" style=" display: inline-block;float: left;margin-right: 5px"><!--{{ 'modal.labels.startTime'| trans({}, 'PublicationBundle') }}--> Inicio</label>
-                <input placeholder="hh:mm:ss" type="text" style="width: 30%;float: left;margin-right: 5px" id="InicioEvento"/><select id="iAmPm" style="width: 28%;float: left"><option value="0">AM</option><option value="12">PM</option></select>
+                <input placeholder="hh:mm:ss" type="text" style="width: 30%;float: left;margin-right: 5px" id="InicioEvento" /><select id="iAmPm" style="width: 28%;float: left"><option value="0">AM</option><option value="12">PM</option></select>
             </div>
             <div id="horaFin" style="width: 46%;float: right">
                 <label for="finEvento" style=" display: inline-block;float: left;margin-right: 5px"><!--{{ 'modal.labels.endTime'| trans({}, 'PublicationBundle') }}--> Fin</label>

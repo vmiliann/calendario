@@ -69,65 +69,25 @@ $(document).ready(function() {
 		navLinks: true,
 		editable: true,
 		eventLimit: true, // allow "more" link when too many events
+		/* cargar los eventos*/
+        /*eventOverlap: function(stillEvent, movingEvent) {
+            return stillEvent.allDay && movingEvent.allDay;
+        },*/
+        eventOverlap: false,
 		events:{
 			url: 'get_eventos.php',
-		},
-		/*events: [
-			{
-				title: 'All Day Event',
-				start: '2017-04-01'
-			},
-			{
-				title: 'Long Event',
-				start: '2017-04-07',
-				end: '2017-04-10'
-			},
-			{
-				id: 999,
-				title: 'Repeating Event',
-				start: '2017-04-09T16:00:00'
-			},
-			{
-				id: 999,
-				title: 'Repeating Event',
-				start: '2017-04-16T16:00:00'
-			},
-			{
-				title: 'Conference',
-				start: '2017-04-11',
-				end: '2017-04-13'
-			},
-			{
-				title: 'Meeting',
-				start: '2017-04-12T10:30:00',
-				end: '2017-04-12T12:30:00'
-			},
-			{
-				title: 'Lunch',
-				start: '2017-04-12T12:00:00'
-			},
-			{
-				title: 'Meeting',
-				start: '2017-04-12T14:30:00'
-			},
-			{
-				title: 'Happy Hour',
-				start: '2017-04-12T17:30:00'
-			},
-			{
-				title: 'Dinner',
-				start: '2017-04-12T20:00:00'
-			},
-			{
-				title: 'Birthday Party',
-				start: '2017-04-13T07:00:00'
-			},
-			{
-				title: 'Click for Google',
-				url: 'http://google.com/',
-				start: '2017-04-28'
-			}
-		],*/
+            type: 'POST',
+            data:{
+                type: 'fetch'
+            },
+            error: function(){
+                alert('No se pueden obtener los datos');
+            },
+            overlaped: false,
+            overlaps: false,
+            stick: true,
+            allDay:false
+		},        
 		droppable: true, // this allows things to be dropped onto the calendar
 		drop: function() {
 			// is the "remove after drop" checkbox checked?
@@ -141,15 +101,30 @@ $(document).ready(function() {
 		select: function(start, end) {
 			var title = prompt('Event Title:');
 			var eventData;
-			if (title) {
-				eventData = {
-					title: title,
-					start: start,
-					end: end
-				};
-				$('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-			}
-			$('#calendar').fullCalendar('unselect');
+            eventData = {
+                title: title,
+                start: start,
+                end: end
+            };
+            $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+            $('#calendar').fullCalendar('unselect');
+			//createEvent(eventData);
+
+            $.ajax({
+                url: 'get_eventos.php',
+                data: 'type=new&title='+title+'&startdate='+start.format("YYYY-MM-DD")+'&startTime='+start.format("HH:mm:SS")+'&enddate='+end.format("YYYY-MM-DD")+'&endTime='+end.format("HH:mm:SS"),
+                type: 'POST',
+                dataType: 'json',
+                success: function(response){
+                    event.id = response.eventid;
+                    $('#calendar').fullCalendar('updateEvent',event);
+                },
+                error: function(e){
+                    console.log(e.responseText);
+
+                }
+            });
+            $('#calendar').fullCalendar('updateEvent',event);
 		},
 		//-----------------------------------------------------------------------------------------------//
 		// cosas nuevas a partir de aqui, 
@@ -191,8 +166,28 @@ $(document).ready(function() {
                 revertFunc();
                 return false;
             }
-            updatePersistedEvent(event);
-            return true;
+            //updatePersistedEvent(event);
+            //return true;
+            console.log(event);
+            var title = event.title;
+            var startdate = event.start.format("YYYY-MM-DD");
+            var startTime = event.start.format("HH:mm:SS");
+            var enddate = event.end.format("YYYY-MM-DD");
+            var endTime = event.end.format("HH:mm:SS");
+            $.ajax({
+                url: 'get_eventos.php',
+                data: 'type=resetdate&title='+title+'&startdate='+startdate+'&startTime='+startTime+'&enddate='+enddate+'&endTime='+endTime+'&eventid='+event.id,
+                type: 'POST',
+                dataType: 'json',
+                success: function(response){
+                    if(response.status != 'success')                            
+                    revertFunc();
+                },
+                error: function(e){                     
+                    revertFunc();
+                    alert('Error processing your request: '+e.responseText);
+                }
+            });
         },
         //Aqui le agregamos el boton cerrar a cada evento. Se puede personalizar tanto como se quiere, pero es preferible utilizar un helper
         //si se van a hacer cambios radicales a la vista del evento
@@ -200,10 +195,8 @@ $(document).ready(function() {
             //Para no mostrar los eventos de otros meses
 //            if(isValidDate(event.start)==false)
 //                return false;
-
             if (source == false) {
                 checkOvelapping(event);
-
             }
 
             if (view.name === "month") {
@@ -262,9 +255,25 @@ $(document).ready(function() {
                 return false;
             }
             function closeOne(event){
-                removeOverlapsTrackingElement(event);
-                deleteEvent(event);
-                $('#calendar').fullCalendar('removeEvents', event._id);
+                //removeOverlapsTrackingElement(event);
+                //deleteEvent(event);
+                //$('#calendar').fullCalendar('removeEvents', event._id);
+                $.ajax({
+                    url: 'get_eventos.php',
+                    data: 'type=remove&eventid='+event.id,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response){
+                        console.log(response);
+                        if(response.status == 'success'){
+                            $('#calendar').fullCalendar('removeEvents');
+                            getFreshEvents();
+                        }
+                    },
+                    error: function(e){ 
+                        alert('Error processing your request: '+e.responseText);
+                    }
+                });
             }
         },
         //este evento actualiza la publicacion cuando en la vista day se arrastra un elemento hacia otra hora inicio
@@ -276,7 +285,27 @@ $(document).ready(function() {
             //console.log('drop')
 
             checkOvelapping(event,false);
-            updatePersistedEvent(event);
+            //updatePersistedEvent(event);
+
+            var title = event.title;
+            var startdate = event.start.format("YYYY-MM-DD");
+            var startTime = event.start.format("HH:mm:SS");
+            var enddate = event.end.format("YYYY-MM-DD");
+            var endTime = event.end.format("HH:mm:SS");
+            $.ajax({
+                url: 'get_eventos.php',
+                data: 'type=resetdate&title='+title+'&startdate='+startdate+'&startTime='+startTime+'&enddate='+enddate+'&endTime='+endTime+'&eventid='+event.id,
+                type: 'POST',
+                dataType: 'json',
+                success: function(response){
+                    if(response.status != 'success')                            
+                    revertFunc();
+                },
+                error: function(e){                     
+                    revertFunc();
+                    alert('Error processing your request: '+e.responseText);
+                }
+            });
 
         },
 
@@ -313,6 +342,11 @@ $(document).ready(function() {
                     alert(msg);
                 }
             }
+
+            /*if (movingEvent.start.format('hh:mm:ss') <= stillEvent.end.format('hh:mm:ss')) {
+                alert('No se pueden tener dos eventos a la vez. Se ajustara a continuacion del evento ' + stillEvent.title);
+                movingEvent.start = stillEvent.end;
+            }*/
         },
 //
 //        // en el evento drop insertamos en la tabla publicacion cuando se suelta un elemento sobre el calendario
@@ -323,13 +357,36 @@ $(document).ready(function() {
 //        },
 //        //Mejor usar este en lugar del drop
         eventReceive: function (event) {
-            if(event.type==tiposEventos.cartelera){
+            /*if(event.type==tiposEventos.cartelera){
             if(!confirm(tipoCartelera)){
                 event.type=tiposEventos.carteleraC;
-            }}
+            }}*/
+            //event.end = event.start + 7200000;
+            //alert("inicio: " + event.start + ", fin: " + event.end);
             checkOvelapping(event,false);
-            $('#calendar').fullCalendar('updateEvent', event);
-            createEvent(event);
+            //$('#calendar').fullCalendar('updateEvent', event);
+            //createEvent(event);
+            var title = event.title;
+            var startdate = event.start.format("YYYY-MM-DD");
+            var startTime = event.start.format("HH:mm:SS");
+            var enddate = event.end.format("YYYY-MM-DD");
+            var endTime = event.end.format("HH:mm:SS");
+            $.ajax({
+                url: 'get_eventos.php',
+                data: 'type=new&title='+title+'&startdate='+startdate+'&startTime='+startTime+'&enddate='+enddate+'&endTime='+endTime,
+                type: 'POST',
+                dataType: 'json',
+                success: function(response){
+                    event.id = response.eventid;
+                    $('#calendar').fullCalendar('updateEvent',event);
+                },
+                error: function(e){
+                    console.log(e.responseText);
+
+                }
+            });
+            $('#calendar').fullCalendar('updateEvent',event);
+            console.log(event);
         },
 
         eventAfterAllRender: function (view) {
@@ -339,9 +396,8 @@ $(document).ready(function() {
                 source = true;
 
             }
-
-
         },
+
         //eventClick define la accion a ejecutar cuando se da clic sobre un evento
         eventClick: function (calEvent, jsEvent, view) {
 
@@ -362,7 +418,14 @@ $(document).ready(function() {
                     $('#infoBlock').html('');
                 }
             
+            //alert('inicio: ' + calEvent.start + ', fin: ' + calEvent.end);
+
+
+            $('#InicioEvento').val(calEvent.start.format('h:mm:ss'));
+            $('#finEvento').val(calEvent.end.format('h:mm:ss'));
+
             $('#crearPub').click();
+
 
             $('#ActualizarHora').on('click', function (evt) {
                     var reg = /^(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9])$/;
@@ -471,72 +534,6 @@ $(document).ready(function() {
                 return fin;
             }
         },
-        /*events: function (start, end, timezone, callback) {
-            var events = [];
-            var options = {};
-            options.data = {};
-            options.data.start=start.format('YYYY-MM-DD');
-            options.data.end=end.format('YYYY-MM-DD');
-            options.type = 'text/json'
-            options.method = 'GET';
-            //options.url: 'php/get_eventos.php';
-            options.url = Routing.generate('get_eventos.php');
-            options.errorcallback = function (error) {
-                console.log(error);
-            }
-            options.successcallback = function (data) {
-                var parseData = JSON.parse(data);
-
-                $(parseData).each(function () {
-                    var startTime = this.startTime;
-                    startTime = (((startTime.date).split(' ')[1]).split('.'))[0];
-                    var startObj = moment(startTime, 'HH:mm:ss');
-                    var startDate = (this.startDate.date).split(' ')[0];
-                    var startDate = moment(startDate, 'YYYY-MM-DD HH:mm:ss').utcOffset(+0000);
-                    startDate.set({
-                        'hour': startObj.get('hour'),
-                        'minute': startObj.get('minute'),
-                        'second': startObj.get('second')
-                    });
-                    var endTime = this.endTime;
-                    endTime = (((endTime.date).split(' ')[1]).split('.'))[0];
-                    var endObj = moment(endTime, 'HH:mm:ss');
-                    var endDate = (this.endDate.date).split(' ')[0];
-                    var endDate = moment(endDate, 'YYYY-MM-DD HH:mm:ss').utcOffset(+0000);
-                    endDate.set({
-                        'hour': endObj.get('hour'),
-                        'minute': endObj.get('minute'),
-                        'second': endObj.get('second')
-                    });
-                    //   if(startDate.isSameOrAfter(start)&&endDate.isSameOrBefore(end)){
-                    if(isValidDate(startDate)==true){
-                        events.push(
-                            {
-                                title: this.title, // use the element's text as the event title
-                                //idRef: -1,
-                                //type: this.type,
-                                //publicationId: this.idPub,
-                                //color: setColors(this.type),
-                                overlaped: false,
-                                overlaps: false,
-                                //parentBlock: this.parent,
-                                start: startDate,
-                                end: endDate,
-                                stick: true,
-                                //idRef: this.ref,
-                                allDay:false
-                            }
-                        );
-                    }
-                    //}
-                });
-
-                callback(events);
-            };
-            ajaxAccess(options);
-
-
-        },*/
 	});
 	
 	//Personalizando algunas cosas del calendario:tooltips iconos...
@@ -557,6 +554,19 @@ $(document).ready(function() {
 
 //---------------------------------------------------------------------------------------------------
 //Comenzamos con las funciones auxiliares
+
+function getFreshEvents(){
+    $.ajax({
+        url: 'get_eventos.php',
+        type: 'POST', // Send post data
+        data: 'type=fetch',
+        async: false,
+        success: function(s){
+            freshevents = s;
+        }
+    });
+    $('#calendar').fullCalendar('addEventSource', JSON.parse(freshevents));
+}
 
 function isValidDate(date){
     var currentDate=$("#calendar").fullCalendar('getDate');
@@ -779,6 +789,18 @@ function createEvent(event) {
         }
     };
     ajaxAccess(options);*/
+    var time = event.start.format('YYYY-MM-DD a');
+    //options.data.startTime = time;
+    var time1 = event.end.format('YYYY-MM-DD a');
+    //options.data.endTime = time1;
+    var time2 = event.start.format('h:mm:ss a');
+    //options.data.startDate = time2;
+    var time3 = event.end.format('h:mm:ss a');
+    //options.data.endDate = time3;
+    alert("Evento " + event.title + " creado. Desde el " + time2 + " hasta el " + time3);
+
+
+    $("#my-events").append(createDivFields(event.title));
 }
 
 function updatePersistedEvent(event) {
@@ -797,6 +819,15 @@ function updatePersistedEvent(event) {
     options.method = 'POST';
     options.url = Routing.generate('publication_update', {id: event.publicationId});
     ajaxAccess(options);*/
+    var time = event.start.format('YYYY-MM-DD a');
+    //options.data.startTime = time;
+    var time1 = event.end.format('YYYY-MM-DD a');
+    //options.data.endTime = time1;
+    var time2 = event.start.format('h:mm:ss a');
+    //options.data.startDate = time2;
+    var time3 = event.end.format('h:mm:ss a');
+    //options.data.endDate = time3;
+    alert("Evento " + event.title + " actualizado. Desde el " + time2 + " hasta el " + time3);
 }
 
 function deleteEvent(event) {
@@ -825,4 +856,11 @@ function ajaxAccess(options) {
             options.errorcallback != undefined ? options.errorcallback(response) : 1 == 1;
         }
     });
+}
+
+function createDivFields(title){
+        var html  = "<div class='fc-event' data-duration='01:00'>";
+            html += title;
+            html += "</div>";
+            return html;
 }

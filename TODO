@@ -1,7 +1,5 @@
 TODO
-
-- crear evento y guardar evento para la base de datos
-- usar el cargar eventos del calendar
-- Los eventos que se adiciones se agreguen al panel lateral
-- que el update eventos cambie en la base de datos
 - eliminar eventos del panel lateral (cmapo en la tabla visibre:bool)
+- que no se solapen los eventos (no pueden estar dos eventos a la vez).
+- combo de canal (cambiar eventos y actualizar calendar cuando se selecciene un canal)
+- hacer tablas multimedia (id, nombre, duracion: time) y canal (id, nombre)
