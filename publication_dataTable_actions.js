@@ -20,11 +20,24 @@ $language_en={
     editNewsBlock: "Edit Block",
     editSignal: "Edit Signal"
 };
+$language_fr={
+    info: "Information",
+    infoNews: "Informations de la nouvelle",
+    infoNewsBlock: "Informations sur le bloc",
+    infoSignal: "Information sur le signal",
+    edit: "Edit",
+    editNewsBlock: "Editer le bloc",
+    editSignal: "Edit Signal"
+};
 
 var $translation = $language_es;
 if(getVarLocale()=="en"){
     $translation = $language_en;
 }
+if(getVarLocale()=="fr"){
+    $translation = $language_fr;
+}
+
 
 var resourcesActions = function (row, data) {
     setupDraggableClass(row);
