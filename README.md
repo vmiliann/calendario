@@ -3,6 +3,5 @@
 
   * **Vladimir Milian** - *Trabajos iniciales* - [vmiliann](https://github.com/vmiliann) 
 
-# calendario
-## :calendar:
+# calendario :calendar:
 Componente de calendario de la tesis de osmin
